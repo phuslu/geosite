@@ -1,0 +1,32 @@
+name: update
+
+on:
+  schedule:
+    - cron: '45 15 * * *'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '1.16.7'
+      - name: Update
+        run: |
+          git clone https://${GEOSITE_TOKEN}@github.com/${GITHUB_REPOSITORY}
+          cd $(basename ${GITHUB_REPOSITORY})
+          curl -o domain-list-community.tar.gz -sSlf https://codeload.github.com/v2fly/domain-list-community/legacy.tar.gz/refs/heads/master
+          go test -v
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git commit -m "update inline tarball" -a; then
+            tag=$(date -u +v1.0.%Y%m%d)
+            sed -i -E "s#const InlineTarballVersion = .+#const InlineTarballVersion = \"$tag\"#g" geosite.go
+            git commit --amend -a --no-edit
+            git tag ${tag}
+            git push origin master
+            git push origin --tags
+          fi
+          true
+        env:
+          GEOSITE_TOKEN: ${{ secrets.GEOSITE_TOKEN }}
