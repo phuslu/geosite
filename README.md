@@ -4,12 +4,12 @@
 
 ### Getting Started
 
+try on https://play.golang.org/p/Hp5zEc2XhwM
 ```go
 package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/phuslu/geosite"
@@ -18,7 +18,8 @@ import (
 func main() {
 	dlc := &geosite.DomainListCommunity{Transport: http.DefaultTransport}
 	dlc.Load(context.Background(), geosite.OnlineTarball)
-	fmt.Printf("%s", dlc.Site("chat.openai.com"))
+	
+	println(dlc.Site("chat.openai.com"))
 }
 
 // Output: openai
@@ -26,7 +27,7 @@ func main() {
 
 ### Benchmarks
 ```
-BenchmarkSite-8         41327437              30.42 ns/op          0 B/op        0 allocs/op
+BenchmarkSite-8         63770426              24.70 ns/op          0 B/op        0 allocs/op
 ```
 
 ### Acknowledgment

@@ -4,7 +4,6 @@
 //
 //	import (
 //		"context"
-//		"fmt"
 //
 //		"github.com/phuslu/geosite"
 //	)
@@ -12,7 +11,7 @@
 //	func main() {
 //		dlc := &geosite.DomainListCommunity{Transport: http.DefaultTransport}
 //		dlc.Load(context.Backgroud(), geosite.OnlineTarball)
-//		fmt.Printf("%s", dlc.Site("chat.openai.com"))
+//		println(dlc.Site("chat.openai.com"))
 //	}
 //
 //	// Output: openai
@@ -28,10 +27,10 @@ import (
 	"sync/atomic"
 )
 
+const Version = "v1.0.20231218"
+
 //go:embed domain-list-community.tar.gz
 var InlineTarball string
-
-const InlineTarballVersion = "v1.0.20231218"
 
 const OnlineTarball = "https://codeload.github.com/v2fly/domain-list-community/legacy.tar.gz/refs/heads/master"
 
@@ -86,10 +85,6 @@ func (d *DomainListCommunity) Site(domain string) (site string) {
 	}
 
 	if site = v.full[domain]; site != "" {
-		return
-	}
-
-	if site = v.suffix[domain]; site != "" {
 		return
 	}
 

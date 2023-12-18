@@ -50,9 +50,6 @@ func parse(data []byte) (*dlc, error) {
 				var re *regexp.Regexp
 				re, err = regexp.Compile(line[len("regexp:"):])
 				if err != nil {
-					re, err = regexp.CompilePOSIX(line[len("regexp:"):])
-				}
-				if err != nil {
 					return true
 				}
 				v.regex = append(v.regex, struct {
@@ -65,8 +62,7 @@ func parse(data []byte) (*dlc, error) {
 			case strings.HasPrefix(line, "full:"):
 				v.full[line[len("full:"):]] = site
 			case strings.HasPrefix(line, "domain:"):
-				line = line[len("domain:"):]
-				fallthrough
+				v.suffix[line[len("domain:"):]] = site
 			default:
 				v.suffix[line] = site
 			}
@@ -79,6 +75,12 @@ func parse(data []byte) (*dlc, error) {
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	for key, value := range v.suffix {
+		if _, ok := v.full[key]; !ok {
+			v.full[key] = value
+		}
 	}
 
 	return v, nil

@@ -20,8 +20,8 @@ func TestSite(t *testing.T) {
 		Site   string
 	}{
 		{"phus.lu", ""},
+		{"apple.com.co", "apple"},
 		{"www.google.com", "google"},
-		{"www.apple.com.co", "apple"},
 		{"chat.openai.com", "openai"},
 	}
 
