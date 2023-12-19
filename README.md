@@ -32,11 +32,11 @@ goarch: amd64
 pkg: github.com/phuslu/geosite
 cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
 BenchmarkSite
-BenchmarkSite-8         44440494              29.04 ns/op           0 B/op         0 allocs/op
+BenchmarkSite-8            25392           42935 ns/op             0 B/op        0 allocs/op
 BenchmarkSiteAttrs
-BenchmarkSiteAttrs-8    35280420              35.77 ns/op           0 B/op         0 allocs/op
+BenchmarkSiteAttrs-8       27147           43925 ns/op             0 B/op        0 allocs/op
 PASS
-ok      github.com/phuslu/geosite       4.011s
+ok      github.com/phuslu/geosite       4.288s
 ```
 
 ### Acknowledgment

@@ -23,6 +23,7 @@ func TestSite(t *testing.T) {
 		{"apple.com.co", "apple"},
 		{"www.google.com", "google"},
 		{"chat.openai.com", "openai"},
+		{"dualstack.apiproxy-42.amazonaws.com", "netflix"},
 	}
 
 	for _, c := range cases {
@@ -41,6 +42,7 @@ func TestSiteAttrs(t *testing.T) {
 	}{
 		{"phus.lu", "", nil},
 		{"www.asus.com.cn", "asus", []string{"cn"}},
+		{"test1234-mihayo.akamaized.net", "mihoyo-cn", []string{"cn"}},
 	}
 
 	for _, c := range cases {

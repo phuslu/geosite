@@ -88,6 +88,13 @@ func (d *DomainListCommunity) Site(domain string) (site string) {
 		return
 	}
 
+	for _, pair := range v.regex {
+		if pair.regex.MatchString(domain) {
+			site = pair.site
+			return
+		}
+	}
+
 	s := domain
 	for {
 		i := strings.IndexByte(s, '.')
@@ -96,13 +103,6 @@ func (d *DomainListCommunity) Site(domain string) (site string) {
 		}
 		s = s[i+1:]
 		if site = v.suffix[s]; site != "" {
-			return
-		}
-	}
-
-	for _, pair := range v.regex {
-		if pair.regex.MatchString(domain) {
-			site = pair.site
 			return
 		}
 	}
@@ -122,6 +122,14 @@ func (d *DomainListCommunity) SiteAttrs(domain string) (site string, attrs []str
 		return
 	}
 
+	for _, pair := range v.regex {
+		if pair.regex.MatchString(domain) {
+			site = pair.site
+			attrs = pair.attrs
+			return
+		}
+	}
+
 	s := domain
 	for {
 		i := strings.IndexByte(s, '.')
@@ -131,14 +139,6 @@ func (d *DomainListCommunity) SiteAttrs(domain string) (site string, attrs []str
 		s = s[i+1:]
 		if site = v.suffix[s]; site != "" {
 			attrs = v.attrs[s]
-			return
-		}
-	}
-
-	for _, pair := range v.regex {
-		if pair.regex.MatchString(domain) {
-			site = pair.site
-			attrs = pair.attrs
 			return
 		}
 	}
