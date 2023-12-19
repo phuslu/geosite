@@ -14,9 +14,11 @@ import (
 type dlc struct {
 	full   map[string]string
 	suffix map[string]string
+	attrs  map[string][]string
 	regex  []struct {
 		regex *regexp.Regexp
 		site  string
+		attrs []string
 	}
 }
 
@@ -24,6 +26,9 @@ func parse(data []byte) (*dlc, error) {
 	v := &dlc{}
 	v.full = make(map[string]string)
 	v.suffix = make(map[string]string)
+	v.attrs = make(map[string][]string)
+
+	reattr := regexp.MustCompile(`@\S+`)
 
 	var err error
 	err = walktarball(bytes.NewReader(data), 1, func(header *tar.Header, r io.Reader) bool {
@@ -44,6 +49,10 @@ func parse(data []byte) (*dlc, error) {
 			if !strings.Contains(line, ".") {
 				continue
 			}
+			var attrs []string
+			for _, m := range reattr.FindAllStringSubmatch(line, -1) {
+				attrs = append(attrs, m[0][1:])
+			}
 			line = strings.Split(line, " ")[0]
 			switch {
 			case strings.HasPrefix(line, "regexp:"):
@@ -55,16 +64,23 @@ func parse(data []byte) (*dlc, error) {
 				v.regex = append(v.regex, struct {
 					regex *regexp.Regexp
 					site  string
+					attrs []string
 				}{
 					regex: re,
 					site:  site,
+					attrs: attrs,
 				})
 			case strings.HasPrefix(line, "full:"):
-				v.full[line[len("full:"):]] = site
+				line = line[len("full:"):]
+				v.full[line] = site
+				v.attrs[line] = attrs
 			case strings.HasPrefix(line, "domain:"):
-				v.suffix[line[len("domain:"):]] = site
+				line = line[len("domain:"):]
+				v.suffix[line] = site
+				v.attrs[line] = attrs
 			default:
 				v.suffix[line] = site
+				v.attrs[line] = attrs
 			}
 		}
 		if err = scanner.Err(); err != nil {

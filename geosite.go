@@ -109,3 +109,39 @@ func (d *DomainListCommunity) Site(domain string) (site string) {
 
 	return
 }
+
+// SiteAttrs return geo site of domain and its attrs.
+func (d *DomainListCommunity) SiteAttrs(domain string) (site string, attrs []string) {
+	v, ok := d.dlc.Load().(*dlc)
+	if !ok || v == nil {
+		return
+	}
+
+	if site = v.full[domain]; site != "" {
+		attrs = v.attrs[domain]
+		return
+	}
+
+	s := domain
+	for {
+		i := strings.IndexByte(s, '.')
+		if i < 0 || i+1 > len(s) {
+			break
+		}
+		s = s[i+1:]
+		if site = v.suffix[s]; site != "" {
+			attrs = v.attrs[s]
+			return
+		}
+	}
+
+	for _, pair := range v.regex {
+		if pair.regex.MatchString(domain) {
+			site = pair.site
+			attrs = pair.attrs
+			return
+		}
+	}
+
+	return
+}

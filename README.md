@@ -27,7 +27,16 @@ func main() {
 
 ### Benchmarks
 ```
-BenchmarkSite-8         63770426              24.70 ns/op          0 B/op        0 allocs/op
+goos: windows
+goarch: amd64
+pkg: github.com/phuslu/geosite
+cpu: 11th Gen Intel(R) Core(TM) i7-1185G7 @ 3.00GHz
+BenchmarkSite
+BenchmarkSite-8         44440494              29.04 ns/op           0 B/op         0 allocs/op
+BenchmarkSiteAttrs
+BenchmarkSiteAttrs-8    35280420              35.77 ns/op           0 B/op         0 allocs/op
+PASS
+ok      github.com/phuslu/geosite       4.011s
 ```
 
 ### Acknowledgment
