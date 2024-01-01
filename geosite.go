@@ -27,7 +27,7 @@ import (
 	"sync/atomic"
 )
 
-const Version = "v1.0.20231218"
+const Version = "v1.0.20240101"
 
 //go:embed domain-list-community.tar.gz
 var InlineTarball string
