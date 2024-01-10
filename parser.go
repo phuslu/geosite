@@ -53,7 +53,9 @@ func parse(data []byte) (*dlc, error) {
 			for _, m := range reattr.FindAllStringSubmatch(line, -1) {
 				attrs = append(attrs, m[0][1:])
 			}
-			line = strings.Split(line, " ")[0]
+			if i := strings.IndexByte(line, ' '); i > 0 {
+				line = line[:i]
+			}
 			switch {
 			case strings.HasPrefix(line, "regexp:"):
 				var re *regexp.Regexp
