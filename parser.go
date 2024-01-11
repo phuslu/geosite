@@ -2,13 +2,13 @@ package geosite
 
 import (
 	"archive/tar"
-	"bufio"
 	"bytes"
 	"compress/gzip"
 	"io"
 	"path"
 	"regexp"
 	"strings"
+	"unsafe"
 )
 
 type dlc struct {
@@ -37,9 +37,21 @@ func parse(data []byte) (*dlc, error) {
 		}
 
 		site := path.Base(header.Name)
-		scanner := bufio.NewScanner(r)
-		for scanner.Scan() {
-			line := strings.TrimSpace(scanner.Text())
+		data, err := io.ReadAll(r)
+		if err != nil {
+			return false
+		}
+		content := *(*string)(unsafe.Pointer(&data))
+
+		for {
+			i := strings.IndexByte(content, '\n')
+			if i < 0 {
+				break
+			}
+
+			line := strings.TrimSpace(content[:i])
+			content = content[i+1:]
+
 			if strings.HasPrefix(line, "#") {
 				continue
 			}
@@ -84,9 +96,6 @@ func parse(data []byte) (*dlc, error) {
 				v.suffix[line] = site
 				v.attrs[line] = attrs
 			}
-		}
-		if err = scanner.Err(); err != nil {
-			return false
 		}
 
 		return true
