@@ -41,12 +41,12 @@ type DomainListCommunity struct {
 
 // Load loads dlc data from repo url to memory.
 func (d *DomainListCommunity) Load(ctx context.Context, tarball string) error {
-	var data []byte
+	var reader io.Reader
 	var err error
 
 	switch {
 	case strings.HasPrefix(tarball, "\x1f\x8b\x08"):
-		data = []byte(tarball)
+		reader = strings.NewReader(tarball)
 	case strings.HasPrefix(tarball, "https://") || strings.HasPrefix(tarball, "http://"):
 		transport := d.Transport
 		if transport == nil {
@@ -58,16 +58,21 @@ func (d *DomainListCommunity) Load(ctx context.Context, tarball string) error {
 			return err
 		}
 		defer resp.Body.Close()
-		data, err = io.ReadAll(resp.Body)
+		reader = resp.Body
 	default:
-		data, err = os.ReadFile(tarball)
+		file, err := os.Open(tarball)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		reader = file
 	}
 
 	if err != nil {
 		return err
 	}
 
-	v, err := parse(data)
+	v, err := parse(reader)
 	if err != nil {
 		return err
 	}

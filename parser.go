@@ -2,7 +2,6 @@ package geosite
 
 import (
 	"archive/tar"
-	"bytes"
 	"compress/gzip"
 	"io"
 	"path"
@@ -22,7 +21,7 @@ type dlc struct {
 	}
 }
 
-func parse(data []byte) (*dlc, error) {
+func parse(reader io.Reader) (*dlc, error) {
 	v := &dlc{}
 	v.full = make(map[string]string)
 	v.suffix = make(map[string]string)
@@ -31,7 +30,7 @@ func parse(data []byte) (*dlc, error) {
 	reattr := regexp.MustCompile(`@\S+`)
 
 	var err error
-	err = walktarball(bytes.NewReader(data), 1, func(header *tar.Header, r io.Reader) bool {
+	err = walktarball(reader, 1, func(header *tar.Header, r io.Reader) bool {
 		if !strings.HasPrefix(header.Name, "data/") || header.Typeflag == tar.TypeDir {
 			return true
 		}
